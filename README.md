@@ -56,11 +56,11 @@ Grab the latest compiled APK from the official [GitHub Releases](https://github.
 
 ```bash
 # Direct download via GitHub CLI
-gh release download v0.1.0 --repo Praveensenpai/kuro-launcher --pattern "*.apk"
+gh release download v0.1.1 --repo Praveensenpai/kuro-launcher --pattern "*.apk"
 ```
 
 Or download directly from your browser:
-👉 **[Download Kuro Launcher v0.1.0 APK](https://github.com/Praveensenpai/kuro-launcher/releases/latest)**
+👉 **[Download Kuro Launcher v0.1.1 APK](https://github.com/Praveensenpai/kuro-launcher/releases/latest)**
 
 ---
 

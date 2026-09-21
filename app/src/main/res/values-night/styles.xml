@@ -27,11 +27,11 @@
         <!--        <item name="android:windowTranslucentStatus">false</item>-->
         <!--        <item name="android:windowTranslucentNavigation">true</item>-->
 
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/white_soft</item>
         <item name="colorPrimaryDark">@android:color/darker_gray</item>
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">@color/white_soft</item>
 
-        <item name="primaryColor">@color/white</item>
+        <item name="primaryColor">@color/white_soft</item>
         <item name="primaryInverseColor">@color/whiteInverse</item>
         <item name="primaryTextShadowColor">@color/whiteInverseTrans50</item>
         <item name="primaryColorTrans50">@color/whiteTrans50</item>
