@@ -33,6 +33,7 @@ import app.olauncher.databinding.FragmentHomeBinding
 import app.olauncher.helper.appUsagePermissionGranted
 import app.olauncher.helper.dpToPx
 import app.olauncher.helper.expandNotificationDrawer
+import app.olauncher.helper.formatTextCase
 import app.olauncher.helper.getChangedAppTheme
 import app.olauncher.helper.getUserHandleFromString
 import app.olauncher.helper.isPackageInstalled
@@ -42,6 +43,7 @@ import app.olauncher.helper.openCameraApp
 import app.olauncher.helper.openDialerApp
 import app.olauncher.helper.setPlainWallpaperByTheme
 import app.olauncher.helper.showToast
+import app.olauncher.helper.triggerHapticFeedback
 import app.olauncher.listener.OnSwipeTouchListener
 import app.olauncher.listener.ViewSwipeTouchListener
 import java.text.SimpleDateFormat
@@ -90,13 +92,23 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             R.id.lock -> {}
             // Home button for recents feature disabled
             // R.id.recents -> {}
-            R.id.clock -> openClockApp()
-            R.id.date -> openCalendarApp()
+            R.id.clock -> {
+                view.triggerHapticFeedback(requireContext())
+                openClockApp()
+            }
+            R.id.date -> {
+                view.triggerHapticFeedback(requireContext())
+                openCalendarApp()
+            }
             R.id.setDefaultLauncher -> viewModel.resetLauncherLiveData.call()
-            R.id.tvScreenTime -> openScreenTimeDigitalWellbeing()
+            R.id.tvScreenTime -> {
+                view.triggerHapticFeedback(requireContext())
+                openScreenTimeDigitalWellbeing()
+            }
 
             else -> {
                 try { // Launch app
+                    view.triggerHapticFeedback(requireContext())
                     val appLocation = view.tag.toString().toInt()
                     homeAppClicked(appLocation)
                 } catch (e: Exception) {
@@ -184,10 +196,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         }
         viewModel.isOlauncherDefault.observe(viewLifecycleOwner, Observer {
             if (it != true) {
-                if (prefs.dailyWallpaper && prefs.appTheme == AppCompatDelegate.MODE_NIGHT_YES) {
-                    prefs.dailyWallpaper = false
-                    viewModel.cancelWallpaperWorker()
-                }
                 prefs.homeBottomAlignment = false
                 setHomeAlignment()
             }
@@ -404,7 +412,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 val shortcuts = launcherApps.getShortcuts(query, userHandle)
                 // Check if our shortcut still exists
                 if (shortcuts?.any { it.id == shortcutId } == true) {
-                    textView.text = appName
+                    textView.text = appName.formatTextCase(prefs.textCase)
                     return true
                 }
                 textView.text = ""
@@ -418,7 +426,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
         // Regular app check
         if (isPackageInstalled(requireContext(), packageName, userString)) {
-            textView.text = appName
+            textView.text = appName.formatTextCase(prefs.textCase)
             return true
         }
         textView.text = ""
@@ -591,13 +599,8 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun changeAppTheme() {
-        if (prefs.dailyWallpaper.not()) return
         val changedAppTheme = getChangedAppTheme(requireContext(), prefs.appTheme)
         prefs.appTheme = changedAppTheme
-        if (prefs.dailyWallpaper) {
-            setPlainWallpaperByTheme(requireContext(), changedAppTheme)
-            viewModel.setWallpaperWorker()
-        }
         requireActivity().recreate()
     }
 
@@ -642,21 +645,25 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         return object : OnSwipeTouchListener(context) {
             override fun onSwipeLeft() {
                 super.onSwipeLeft()
+                binding.mainLayout.triggerHapticFeedback(context)
                 openSwipeLeftApp()
             }
 
             override fun onSwipeRight() {
                 super.onSwipeRight()
+                binding.mainLayout.triggerHapticFeedback(context)
                 openSwipeRightApp()
             }
 
             override fun onSwipeUp() {
                 super.onSwipeUp()
+                binding.mainLayout.triggerHapticFeedback(context)
                 showAppList(Constants.FLAG_LAUNCH_APP)
             }
 
             override fun onSwipeDown() {
                 super.onSwipeDown()
+                binding.mainLayout.triggerHapticFeedback(context)
                 expandNotificationDrawer(requireContext())
             }
 
@@ -673,6 +680,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             override fun onDoubleClick() {
                 super.onDoubleClick()
                 if (!prefs.lockModeOn) return
+                binding.mainLayout.triggerHapticFeedback(context)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                     binding.lock.performClick()
                 else
@@ -690,21 +698,25 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         return object : ViewSwipeTouchListener(context, view) {
             override fun onSwipeLeft() {
                 super.onSwipeLeft()
+                view.triggerHapticFeedback(context)
                 openSwipeLeftApp()
             }
 
             override fun onSwipeRight() {
                 super.onSwipeRight()
+                view.triggerHapticFeedback(context)
                 openSwipeRightApp()
             }
 
             override fun onSwipeUp() {
                 super.onSwipeUp()
+                view.triggerHapticFeedback(context)
                 showAppList(Constants.FLAG_LAUNCH_APP)
             }
 
             override fun onSwipeDown() {
                 super.onSwipeDown()
+                view.triggerHapticFeedback(context)
                 expandNotificationDrawer(requireContext())
             }
 

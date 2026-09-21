@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Olauncher</string>
+    <string name="app_name" translatable="false">Kuro Launcher</string>
     <string name="github" translatable="false">Github</string>
     <string name="lock_layout_description" translatable="false">lock layout description to be used a unique id to lock screen</string>
     <!-- Home button for recents feature disabled -->
@@ -49,6 +49,10 @@
     <string name="swipe_up_for_apps">1. Swipe up for all apps\n2. Long press anywhere for settings</string>
     <string name="apps_on_home_screen">Apps on home screen</string>
     <string name="daily_wallpaper_update">Daily new wallpaper</string>
+    <string name="set_wallpaper_from_gallery">Set wallpaper from gallery</string>
+    <string name="wallpaper_from_gallery_cleared">Gallery wallpaper cleared</string>
+    <string name="wallpaper_set_successfully">Wallpaper set successfully</string>
+    <string name="failed_to_set_wallpaper">Failed to set wallpaper</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
     <string name="center">Center</string>
@@ -173,4 +177,10 @@
     <string name="invalid_shortcut">Invalid shortcut</string>
     <string name="shortcut_not_found">Shortcut not found</string>
     <string name="unable_to_open_shortcut">Unable to open shortcut</string>
+    <string name="text_case">Text case</string>
+    <string name="text_case_default">Default</string>
+    <string name="text_case_lowercase">lowercase</string>
+    <string name="text_case_uppercase">UPPERCASE</string>
+    <string name="haptic_feedback">Haptic feedback</string>
+    <string name="unlock_hidden_apps">Unlock hidden apps</string>
 </resources>

@@ -20,14 +20,17 @@ import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
 import app.olauncher.databinding.AdapterAppDrawerBinding
 import app.olauncher.databinding.AdapterPrivateSpaceHeaderBinding
+import app.olauncher.helper.formatTextCase
 import app.olauncher.helper.hideKeyboard
 import app.olauncher.helper.isSystemApp
 import app.olauncher.helper.showKeyboard
+import app.olauncher.helper.triggerHapticFeedback
 import java.text.Normalizer
 
 class AppDrawerAdapter(
     private var flag: Int,
     private val appLabelGravity: Int,
+    private val textCase: Int = Constants.TextCase.DEFAULT,
     private val appClickListener: (AppModel) -> Unit,
     private val appInfoListener: (AppModel) -> Unit,
     private val appDeleteListener: (AppModel) -> Unit,
@@ -113,6 +116,7 @@ class AppDrawerAdapter(
                 is ViewHolder -> holder.bind(
                     flag,
                     appLabelGravity,
+                    textCase,
                     myUserHandle,
                     appModel,
                     appClickListener,
@@ -135,10 +139,20 @@ class AppDrawerAdapter(
                 isBangSearch = charSearch?.startsWith("!") ?: false
                 autoLaunch = allowAutoLaunch && (charSearch?.startsWith(" ")?.not() ?: true)
 
-                val appFilteredList = (if (charSearch.isNullOrBlank()) appsList
-                else appsList.filter { app ->
-                    app !is AppModel.PrivateSpaceHeader && appLabelMatches(app.appLabel, charSearch)
-                } as MutableList<AppModel>)
+                val appFilteredList = if (charSearch.isNullOrBlank()) {
+                    appsList
+                } else {
+                    val query = charSearch.trim().toString()
+                    appsList
+                        .filter { it !is AppModel.PrivateSpaceHeader && it.appLabel.isNotBlank() }
+                        .mapNotNull { app ->
+                            val score = getMatchScore(app.appLabel, query)
+                            if (score != null) Pair(app, score) else null
+                        }
+                        .sortedWith(compareBy({ it.second }, { it.first.appLabel.lowercase() }))
+                        .map { it.first }
+                        .toMutableList()
+                }
 
                 val filterResults = FilterResults()
                 filterResults.values = appFilteredList
@@ -172,10 +186,87 @@ class AppDrawerAdapter(
         }
     }
 
-    private fun appLabelMatches(appLabel: String, charSearch: CharSequence): Boolean {
-        if (appLabel.contains(charSearch.trim(), true)) return true
-        val query = charSearch.normalizeForSearch()
-        return query.isNotEmpty() && appLabel.normalizeForSearch().contains(query, true)
+    private fun getMatchScore(appLabel: String, rawQuery: String): Int? {
+        val query = rawQuery.trim()
+        if (query.isEmpty()) return 0
+
+        // 1. Exact match
+        if (appLabel.equals(query, ignoreCase = true)) return 0
+
+        // 2. Prefix match
+        if (appLabel.startsWith(query, ignoreCase = true)) return 10
+
+        // 3. Word start / CamelCase boundary prefix match (e.g. "gpt" for "ChatGPT", "store" for "Play Store")
+        val camelCaseLabel = appLabel.replace(Regex("(?<=[a-z])(?=[A-Z])"), " ")
+        val words = camelCaseLabel.split(Regex("[-_+,.`'\\s\\p{Z}]+")).filter { it.isNotEmpty() }
+        if (words.any { it.startsWith(query, ignoreCase = true) }) return 20
+
+        // 4. Acronym / Initials match (e.g. "cgpt" for "ChatGPT", "yt" for "YouTube", "ps" for "Play Store")
+        val initials = buildString {
+            for (i in appLabel.indices) {
+                val ch = appLabel[i]
+                val isStart = i == 0 || !appLabel[i - 1].isLetterOrDigit() || (ch.isUpperCase() && appLabel[i - 1].isLowerCase())
+                if (isStart && ch.isLetterOrDigit()) {
+                    append(ch)
+                }
+            }
+        }
+        if (initials.startsWith(query, ignoreCase = true)) return 30
+
+        val capitalInitials = buildString {
+            for (i in appLabel.indices) {
+                val ch = appLabel[i]
+                if (ch.isUpperCase() || (i == 0 && ch.isLetterOrDigit()) || (i > 0 && !appLabel[i - 1].isLetterOrDigit() && ch.isLetterOrDigit())) {
+                    append(ch)
+                }
+            }
+        }
+        if (capitalInitials.startsWith(query, ignoreCase = true)) return 31
+
+        // 5. Contiguous substring match
+        val subIndex = appLabel.indexOf(query, ignoreCase = true)
+        if (subIndex >= 0) return 40 + subIndex.coerceAtMost(20)
+
+        // Contiguous substring with diacritics normalized
+        val normLabel = appLabel.normalizeForSearch()
+        val normQuery = query.normalizeForSearch()
+        if (normQuery.isNotEmpty() && normLabel.contains(normQuery, ignoreCase = true)) {
+            return 65
+        }
+
+        // 6. Fuzzy subsequence match (requires query of at least 2 characters)
+        fuzzySubsequenceMatch(appLabel, query)?.let { return 70 + it }
+        if (normQuery.isNotEmpty()) {
+            fuzzySubsequenceMatch(normLabel, normQuery)?.let { return 90 + it }
+        }
+
+        return null
+    }
+
+    private fun fuzzySubsequenceMatch(target: String, query: String): Int? {
+        if (query.length < 2) return null
+        var qIdx = 0
+        var score = 10
+        var prevMatchIdx = -1
+
+        val t = target.lowercase()
+        val q = query.lowercase()
+
+        for (i in t.indices) {
+            if (qIdx < q.length && t[i] == q[qIdx]) {
+                val isBoundary = i == 0 || !target[i - 1].isLetterOrDigit() || (target[i].isUpperCase() && target[i - 1].isLowerCase())
+                if (isBoundary) {
+                    score -= 2
+                }
+                if (prevMatchIdx != -1) {
+                    val gap = i - prevMatchIdx - 1
+                    score += gap
+                }
+                prevMatchIdx = i
+                qIdx++
+            }
+        }
+        return if (qIdx == q.length) score else null
     }
 
     private fun CharSequence.normalizeForSearch(): String =
@@ -226,6 +317,7 @@ class AppDrawerAdapter(
         fun bind(
             flag: Int,
             appLabelGravity: Int,
+            textCase: Int,
             myUserHandle: UserHandle,
             appModel: AppModel,
             clickListener: (AppModel) -> Unit,
@@ -240,13 +332,16 @@ class AppDrawerAdapter(
 
             // Show indicators in title based on app type and state
             appTitle.text = buildString {
-                append(appModel.appLabel)
+                append(appModel.appLabel.formatTextCase(textCase))
                 if (appModel.isNew) append(" ✦")
             }
             appTitle.gravity = appLabelGravity
             otherProfileIndicator.isVisible = appModel.user != myUserHandle
 
-            appTitle.setOnClickListener { clickListener(appModel) }
+            appTitle.setOnClickListener {
+                root.triggerHapticFeedback(root.context)
+                clickListener(appModel)
+            }
 
             appTitle.setOnLongClickListener {
                 if (appModel.appPackage.isNotEmpty()) {

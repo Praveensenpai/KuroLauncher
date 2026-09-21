@@ -20,6 +20,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.UserHandle
 import android.os.UserManager
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.AlarmClock
 import android.provider.CalendarContract
 import android.provider.MediaStore
@@ -27,6 +30,8 @@ import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
+import android.view.HapticFeedbackConstants
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.AttrRes
@@ -299,8 +304,28 @@ fun setPlainWallpaperByTheme(context: Context, appTheme: Int) {
     }
 }
 
+fun setDefaultPitchBlackWallpaper(context: Context) {
+    try {
+        val manager = WallpaperManager.getInstance(context)
+        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.default_wallpaper)
+            ?: createBitmap(1080, 2400).apply { eraseColor(android.graphics.Color.BLACK) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            manager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_SYSTEM)
+            manager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK)
+        } else {
+            manager.setBitmap(bitmap)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
 fun setPlainWallpaper(context: Context, color: Int) {
     try {
+        if (color == android.R.color.black) {
+            setDefaultPitchBlackWallpaper(context)
+            return
+        }
         val bitmap = createBitmap(1000, 2000)
         bitmap.eraseColor(context.getColor(color))
         val manager = WallpaperManager.getInstance(context)
@@ -398,6 +423,42 @@ suspend fun setWallpaper(appContext: Context, url: String): Boolean {
             wallpaperManager.setBitmap(scaledBitmap, null, false, WallpaperManager.FLAG_SYSTEM)
             wallpaperManager.setBitmap(scaledBitmap, null, false, WallpaperManager.FLAG_LOCK)
         } catch (e: Exception) {
+            return@withContext false
+        }
+
+        try {
+            originalImageBitmap.recycle()
+            scaledBitmap.recycle()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        true
+    }
+}
+
+suspend fun setWallpaperFromUri(appContext: Context, uri: Uri): Boolean {
+    return withContext(Dispatchers.IO) {
+        val originalImageBitmap = try {
+            appContext.contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } ?: return@withContext false
+
+        if (appContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && isTablet(appContext).not())
+            return@withContext false
+
+        val wallpaperManager = WallpaperManager.getInstance(appContext)
+        val (width, height) = getScreenDimensions(appContext)
+        val scaledBitmap = getWallpaperBitmap(originalImageBitmap, width, height)
+
+        try {
+            wallpaperManager.setBitmap(scaledBitmap, null, false, WallpaperManager.FLAG_SYSTEM)
+            wallpaperManager.setBitmap(scaledBitmap, null, false, WallpaperManager.FLAG_LOCK)
+        } catch (e: Exception) {
+            e.printStackTrace()
             return@withContext false
         }
 
@@ -657,5 +718,41 @@ fun Context.deletePinnedShortcut(packageName: String, shortcutIdToDelete: String
     } catch (e: Exception) {
         // Handle other potential exceptions (like RemoteException wrapped)
         Log.e("ShortcutHelper", "Failed to modify pinned shortcuts for $packageName", e)
+    }
+}
+
+fun String.formatTextCase(textCase: Int): String = when (textCase) {
+    Constants.TextCase.LOWERCASE -> this.lowercase()
+    Constants.TextCase.UPPERCASE -> this.uppercase()
+    else -> this
+}
+
+fun View?.triggerHapticFeedback(context: Context) {
+    try {
+        val prefs = Prefs(context)
+        if (!prefs.hapticFeedback) return
+
+        if (this != null && performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)) {
+            return
+        }
+
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            vm?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            vibrator?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator?.vibrate(VibrationEffect.createOneShot(15, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator?.vibrate(15)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }

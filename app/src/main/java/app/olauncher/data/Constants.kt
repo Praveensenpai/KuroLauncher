@@ -41,6 +41,12 @@ object Constants {
         }
     }
 
+    object TextCase {
+        const val DEFAULT = 0
+        const val LOWERCASE = 1
+        const val UPPERCASE = 2
+    }
+
     object CharacterIndicator {
         const val SHOW = 102
         const val HIDE = 101

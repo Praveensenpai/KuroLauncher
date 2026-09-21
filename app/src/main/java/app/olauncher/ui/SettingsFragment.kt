@@ -1,11 +1,15 @@
 package app.olauncher.ui
 
+import android.app.KeyguardManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.hardware.biometrics.BiometricManager
+import android.hardware.biometrics.BiometricPrompt
 import android.os.Build
 import android.os.Bundle
+import android.os.CancellationSignal
 import android.os.Process
 import android.provider.Settings
 import android.view.Gravity
@@ -42,7 +46,13 @@ import app.olauncher.helper.shareApp
 import app.olauncher.helper.OlDialog
 import app.olauncher.helper.showPopupMenu
 import app.olauncher.helper.showStatusBar
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import app.olauncher.helper.setWallpaperFromUri
 import app.olauncher.helper.showToast
+import app.olauncher.helper.triggerHapticFeedback
 import app.olauncher.listener.DeviceAdmin
 
 class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListener {
@@ -54,8 +64,12 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-    private val showPentastic = System.currentTimeMillis() % 2 == 0L
     private var dialog: OlDialog? = null
+
+    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        viewModel.isPickingFile = false
+        uri?.let { applyGalleryWallpaper(it) }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
@@ -75,32 +89,27 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         checkAdminPermission()
 
         binding.homeAppsNum.text = prefs.homeAppsNum.toString()
-        populateProMessage()
         populateKeyboardText()
         populateScreenTimeOnOff()
         populateLockSettings()
         // Home button for recents feature disabled
         // populateHomeButtonRecents()
         populateWallpaperText()
-        populateAppThemeText()
         populateTextSize()
         populateBoldFont()
+        populateTextCase()
+        populateHapticFeedback()
         populateAlignment()
         populateStatusBar()
         populateDateTime()
         populateSwipeApps()
-        populateActionHints()
         initClickListeners()
         initObservers()
-
-        if (showPentastic)
-            binding.footer.text = getText(R.string.new_app_minimal_todo_lists)
     }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.olauncherHiddenApps -> showHiddenApps()
-            R.id.moreFeatures -> viewModel.showDialog.postValue(Constants.Dialog.PRO_MESSAGE)
             R.id.screenTimeOnOff -> viewModel.showDialog.postValue(Constants.Dialog.DIGITAL_WELLBEING)
             R.id.appInfo -> openAppInfo(requireContext(), Process.myUserHandle(), BuildConfig.APPLICATION_ID)
             R.id.setLauncher -> viewModel.resetLauncherLiveData.call()
@@ -109,37 +118,17 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
             // R.id.homeButtonRecents -> toggleHomeButtonRecents()
             R.id.autoShowKeyboard -> toggleKeyboardText()
             R.id.homeAppsNum -> showHomeAppsNumMenu(view)
-            R.id.dailyWallpaperUrl -> requireContext().openUrl(prefs.dailyWallpaperUrl)
-            R.id.dailyWallpaper -> toggleDailyWallpaperUpdate()
+            R.id.galleryWallpaper, R.id.galleryWallpaperLabel -> pickGalleryWallpaper()
             R.id.alignment -> showAlignmentMenu(view)
             R.id.statusBar -> toggleStatusBar()
             R.id.dateTime -> showDateTimeMenu(view)
-            R.id.appThemeText -> showAppThemeMenu(view, showSystem = false)
             R.id.textSizeValue -> showTextSizeDialog()
             R.id.boldFont -> toggleBoldFont()
+            R.id.textCase -> showTextCaseMenu(view)
+            R.id.hapticFeedback -> toggleHapticFeedback()
 
             R.id.swipeLeftApp -> showAppListIfEnabled(Constants.FLAG_SET_SWIPE_LEFT_APP)
             R.id.swipeRightApp -> showAppListIfEnabled(Constants.FLAG_SET_SWIPE_RIGHT_APP)
-
-            R.id.aboutOlauncher -> {
-                prefs.aboutClicked = true
-                requireContext().openUrl(Constants.URL_ABOUT_OLAUNCHER)
-            }
-
-            R.id.share -> requireActivity().shareApp()
-            R.id.rate -> {
-                prefs.rateClicked = true
-                requireActivity().rateApp()
-            }
-
-            R.id.twitter -> requireContext().openUrl(Constants.URL_TWITTER_TANUJ)
-            R.id.github -> requireContext().openUrl(Constants.URL_OLAUNCHER_GITHUB)
-            R.id.privacy -> requireContext().openUrl(Constants.URL_OLAUNCHER_PRIVACY)
-            R.id.footer -> {
-                requireContext().openUrl(
-                    if (showPentastic) Constants.URL_PENTASTIC else Constants.URL_NTS
-                )
-            }
         }
     }
 
@@ -151,8 +140,7 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
                 requireContext().showToast(getString(R.string.alignment_changed))
             }
 
-            R.id.dailyWallpaper -> removeWallpaper()
-            R.id.appThemeText -> showAppThemeMenu(view, showSystem = true)
+            R.id.galleryWallpaper, R.id.galleryWallpaperLabel -> clearGalleryWallpaper()
             R.id.swipeLeftApp -> toggleSwipeLeft()
             R.id.swipeRightApp -> toggleSwipeRight()
             R.id.toggleLock -> startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
@@ -164,45 +152,34 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         binding.olauncherHiddenApps.setOnClickListener(this)
         binding.appInfo.setOnClickListener(this)
         binding.setLauncher.setOnClickListener(this)
-        binding.aboutOlauncher.setOnClickListener(this)
-        binding.moreFeatures.setOnClickListener(this)
         binding.autoShowKeyboard.setOnClickListener(this)
         binding.toggleLock.setOnClickListener(this)
         // Home button for recents feature disabled
         // binding.homeButtonRecents.setOnClickListener(this)
         binding.homeAppsNum.setOnClickListener(this)
         binding.screenTimeOnOff.setOnClickListener(this)
-        binding.dailyWallpaperUrl.setOnClickListener(this)
-        binding.dailyWallpaper.setOnClickListener(this)
+        binding.galleryWallpaper?.setOnClickListener(this)
+        binding.galleryWallpaperLabel?.setOnClickListener(this)
         binding.alignment.setOnClickListener(this)
         binding.statusBar.setOnClickListener(this)
         binding.dateTime.setOnClickListener(this)
         binding.swipeLeftApp.setOnClickListener(this)
         binding.swipeRightApp.setOnClickListener(this)
-        binding.appThemeText.setOnClickListener(this)
         binding.textSizeValue.setOnClickListener(this)
         binding.boldFont.setOnClickListener(this)
+        binding.textCase.setOnClickListener(this)
+        binding.hapticFeedback.setOnClickListener(this)
 
-        binding.share.setOnClickListener(this)
-        binding.rate.setOnClickListener(this)
-        binding.twitter.setOnClickListener(this)
-        binding.github.setOnClickListener(this)
-        binding.privacy.setOnClickListener(this)
-        binding.footer.setOnClickListener(this)
-
-        binding.dailyWallpaper.setOnLongClickListener(this)
+        binding.galleryWallpaper?.setOnLongClickListener(this)
+        binding.galleryWallpaperLabel?.setOnLongClickListener(this)
         binding.alignment.setOnLongClickListener(this)
-        binding.appThemeText.setOnLongClickListener(this)
         binding.swipeLeftApp.setOnLongClickListener(this)
         binding.swipeRightApp.setOnLongClickListener(this)
         binding.toggleLock.setOnLongClickListener(this)
     }
 
     private fun initObservers() {
-        if (prefs.firstSettingsOpen) {
-            viewModel.showDialog.postValue(Constants.Dialog.ABOUT)
-            prefs.firstSettingsOpen = false
-        }
+        prefs.firstSettingsOpen = false
         viewModel.isOlauncherDefault.observe(viewLifecycleOwner) {
             if (it) {
                 binding.setLauncher.text = getString(R.string.change_default_launcher)
@@ -255,19 +232,6 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         }
     }
 
-    // "System" stays hidden unless the row is long pressed
-    private fun showAppThemeMenu(anchor: View, showSystem: Boolean) {
-        anchor.showPopupMenu(
-            R.menu.app_theme,
-            configure = { menu -> menu.findItem(R.id.themeSystem).isVisible = showSystem }
-        ) { item ->
-            when (item.itemId) {
-                R.id.themeLight -> updateTheme(AppCompatDelegate.MODE_NIGHT_NO)
-                R.id.themeDark -> updateTheme(AppCompatDelegate.MODE_NIGHT_YES)
-                R.id.themeSystem -> updateTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
-        }
-    }
 
     // Dialogs
 
@@ -359,16 +323,68 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         )
     }
 
-    private fun showHiddenApps() {
-        if (prefs.hiddenApps.isEmpty()) {
-            requireContext().showToast(getString(R.string.no_hidden_apps))
-            return
-        }
+    private fun openHiddenAppsDirectly() {
         viewModel.getHiddenApps()
         findNavController().navigate(
             R.id.action_settingsFragment_to_appListFragment,
             bundleOf(Constants.Key.FLAG to Constants.FLAG_HIDDEN_APPS)
         )
+    }
+
+    private fun showHiddenApps() {
+        if (prefs.hiddenApps.isEmpty()) {
+            requireContext().showToast(getString(R.string.no_hidden_apps))
+            return
+        }
+        if (!prefs.biometricHiddenApps) {
+            openHiddenAppsDirectly()
+            return
+        }
+
+        val keyguardManager = requireContext().getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+        if (keyguardManager?.isDeviceSecure != true) {
+            openHiddenAppsDirectly()
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val biometricPrompt = BiometricPrompt.Builder(requireContext())
+                .setTitle(getString(R.string.unlock_hidden_apps))
+                .setAllowedAuthenticators(
+                    BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                )
+                .build()
+
+            biometricPrompt.authenticate(
+                CancellationSignal(),
+                requireActivity().mainExecutor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
+                        super.onAuthenticationSucceeded(result)
+                        openHiddenAppsDirectly()
+                    }
+                }
+            )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            @Suppress("DEPRECATION")
+            val biometricPrompt = BiometricPrompt.Builder(requireContext())
+                .setTitle(getString(R.string.unlock_hidden_apps))
+                .setDeviceCredentialAllowed(true)
+                .build()
+
+            biometricPrompt.authenticate(
+                CancellationSignal(),
+                requireActivity().mainExecutor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
+                        super.onAuthenticationSucceeded(result)
+                        openHiddenAppsDirectly()
+                    }
+                }
+            )
+        } else {
+            openHiddenAppsDirectly()
+        }
     }
 
     private fun checkAdminPermission() {
@@ -426,30 +442,35 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
             prefs.appTheme = AppCompatDelegate.MODE_NIGHT_YES
             setPlainWallpaper(requireContext(), android.R.color.black)
         }
-        if (!prefs.dailyWallpaper) return
+        prefs.galleryWallpaperSet = false
         prefs.dailyWallpaper = false
         populateWallpaperText()
         viewModel.cancelWallpaperWorker()
     }
 
-    private fun toggleDailyWallpaperUpdate() {
-        if (prefs.dailyWallpaper.not() && prefs.appTheme == AppCompatDelegate.MODE_NIGHT_YES && viewModel.isOlauncherDefault.value == false) {
-            requireContext().showToast(R.string.set_as_default_launcher_first)
-            return
-        }
-        prefs.dailyWallpaper = !prefs.dailyWallpaper
-        populateWallpaperText()
-        if (prefs.dailyWallpaper) {
-            viewModel.setWallpaperWorker()
-            showWallpaperToasts()
-        } else viewModel.cancelWallpaperWorker()
+    private fun pickGalleryWallpaper() {
+        viewModel.isPickingFile = true
+        selectImageLauncher.launch("image/*")
     }
 
-    private fun showWallpaperToasts() {
-        if (isOlauncherDefault(requireContext()))
-            requireContext().showToast(getString(R.string.your_wallpaper_will_update_shortly))
-        else
-            requireContext().showToast(getString(R.string.olauncher_is_not_default_launcher), Toast.LENGTH_LONG)
+    private fun clearGalleryWallpaper() {
+        removeWallpaper()
+        requireContext().showToast(getString(R.string.wallpaper_from_gallery_cleared))
+    }
+
+    private fun applyGalleryWallpaper(uri: Uri) {
+        lifecycleScope.launch {
+            val success = setWallpaperFromUri(requireContext(), uri)
+            if (success) {
+                prefs.dailyWallpaper = false
+                prefs.galleryWallpaperSet = true
+                viewModel.cancelWallpaperWorker()
+                populateWallpaperText()
+                requireContext().showToast(getString(R.string.wallpaper_set_successfully))
+            } else {
+                requireContext().showToast(getString(R.string.failed_to_set_wallpaper))
+            }
+        }
     }
 
     private fun updateHomeAppsNum(num: Int) {
@@ -499,41 +520,6 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         }
     }
 
-    private fun updateTheme(appTheme: Int) {
-        if (AppCompatDelegate.getDefaultNightMode() == appTheme) return
-        prefs.appTheme = appTheme
-        populateAppThemeText(appTheme)
-        setAppTheme(appTheme)
-    }
-
-    private fun setAppTheme(theme: Int) {
-        if (AppCompatDelegate.getDefaultNightMode() == theme) return
-        if (prefs.dailyWallpaper) {
-            setPlainWallpaper(theme)
-            viewModel.setWallpaperWorker()
-        }
-        requireActivity().recreate()
-    }
-
-    private fun setPlainWallpaper(appTheme: Int) {
-        when (appTheme) {
-            AppCompatDelegate.MODE_NIGHT_YES -> setPlainWallpaper(requireContext(), android.R.color.black)
-            AppCompatDelegate.MODE_NIGHT_NO -> setPlainWallpaper(requireContext(), android.R.color.white)
-            else -> {
-                if (requireContext().isDarkThemeOn())
-                    setPlainWallpaper(requireContext(), android.R.color.black)
-                else setPlainWallpaper(requireContext(), android.R.color.white)
-            }
-        }
-    }
-
-    private fun populateAppThemeText(appTheme: Int = prefs.appTheme) {
-        when (appTheme) {
-            AppCompatDelegate.MODE_NIGHT_YES -> binding.appThemeText.text = getString(R.string.dark)
-            AppCompatDelegate.MODE_NIGHT_NO -> binding.appThemeText.text = getString(R.string.light)
-            else -> binding.appThemeText.text = getString(R.string.system_default)
-        }
-    }
 
     private fun populateTextSize() {
         binding.textSizeValue.text = formatScale(prefs.textSizeScale)
@@ -549,6 +535,39 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         binding.boldFont.text = getString(if (prefs.boldFont) R.string.on else R.string.off)
     }
 
+    private fun showTextCaseMenu(anchor: View) {
+        anchor.showPopupMenu(
+            configure = { menu ->
+                menu.add(Menu.NONE, Constants.TextCase.DEFAULT, 0, R.string.text_case_default)
+                menu.add(Menu.NONE, Constants.TextCase.LOWERCASE, 1, R.string.text_case_lowercase)
+                menu.add(Menu.NONE, Constants.TextCase.UPPERCASE, 2, R.string.text_case_uppercase)
+            }
+        ) { item ->
+            prefs.textCase = item.itemId
+            populateTextCase()
+        }
+    }
+
+    private fun populateTextCase() {
+        binding.textCase.text = when (prefs.textCase) {
+            Constants.TextCase.LOWERCASE -> getString(R.string.text_case_lowercase)
+            Constants.TextCase.UPPERCASE -> getString(R.string.text_case_uppercase)
+            else -> getString(R.string.text_case_default)
+        }
+    }
+
+    private fun toggleHapticFeedback() {
+        prefs.hapticFeedback = !prefs.hapticFeedback
+        populateHapticFeedback()
+        if (prefs.hapticFeedback) {
+            binding.hapticFeedback.triggerHapticFeedback(requireContext())
+        }
+    }
+
+    private fun populateHapticFeedback() {
+        binding.hapticFeedback.text = getString(if (prefs.hapticFeedback) R.string.on else R.string.off)
+    }
+
     private fun populateScreenTimeOnOff() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (requireContext().appUsagePermissionGranted()) binding.screenTimeOnOff.text = getString(R.string.on)
@@ -562,8 +581,8 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
     }
 
     private fun populateWallpaperText() {
-        if (prefs.dailyWallpaper) binding.dailyWallpaper.text = getString(R.string.on)
-        else binding.dailyWallpaper.text = getString(R.string.off)
+        if (prefs.galleryWallpaperSet) binding.galleryWallpaper?.text = getString(R.string.on)
+        else binding.galleryWallpaper?.text = getString(R.string.off)
     }
 
     private fun updateHomeBottomAlignment() {
@@ -646,20 +665,6 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         )
     }
 
-    private fun populateActionHints() {
-        if (prefs.aboutClicked.not())
-            binding.aboutOlauncher.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_info, 0)
-        if (viewModel.isOlauncherDefault.value != true) return
-        if (prefs.rateClicked.not() && prefs.toShowHintCounter > Constants.HINT_RATE_US && prefs.toShowHintCounter < Constants.HINT_RATE_US + 100)
-            binding.rate.setCompoundDrawablesWithIntrinsicBounds(0, android.R.drawable.arrow_down_float, 0, 0)
-    }
-
-    private fun populateProMessage() {
-        if (prefs.proMessageShown.not() && prefs.userState == Constants.UserState.SHARE) {
-            prefs.proMessageShown = true
-            viewModel.showDialog.postValue(Constants.Dialog.PRO_MESSAGE)
-        }
-    }
 
     override fun onDestroyView() {
         // Dismissing the text size dialog applies any pending scale via its dismiss listener

@@ -20,6 +20,7 @@ class Prefs(context: Context) {
     private val KEYBOARD_MESSAGE = "KEYBOARD_MESSAGE"
     private val DAILY_WALLPAPER = "DAILY_WALLPAPER"
     private val DAILY_WALLPAPER_URL = "DAILY_WALLPAPER_URL"
+    private val GALLERY_WALLPAPER_SET = "GALLERY_WALLPAPER_SET"
     private val HOME_ALIGNMENT = "HOME_ALIGNMENT"
     private val HOME_BOTTOM_ALIGNMENT = "HOME_BOTTOM_ALIGNMENT"
     private val APP_LABEL_ALIGNMENT = "APP_LABEL_ALIGNMENT"
@@ -37,6 +38,9 @@ class Prefs(context: Context) {
     private val SHARE_SHOWN_TIME = "SHARE_SHOWN_TIME"
     private val TEXT_SIZE_SCALE = "TEXT_SIZE_SCALE"
     private val BOLD_FONT = "BOLD_FONT"
+    private val TEXT_CASE = "TEXT_CASE"
+    private val HAPTIC_FEEDBACK = "HAPTIC_FEEDBACK"
+    private val BIOMETRIC_HIDDEN_APPS = "BIOMETRIC_HIDDEN_APPS"
     private val PRO_MESSAGE_SHOWN = "PRO_MESSAGE_SHOWN"
     private val HIDE_SET_DEFAULT_LAUNCHER = "HIDE_SET_DEFAULT_LAUNCHER"
     private val SCREEN_TIME_LAST_UPDATED = "SCREEN_TIME_LAST_UPDATED"
@@ -160,6 +164,10 @@ class Prefs(context: Context) {
         get() = prefs.getString(DAILY_WALLPAPER_URL, "").toString()
         set(value) = prefs.edit { putString(DAILY_WALLPAPER_URL, value).apply() }
 
+    var galleryWallpaperSet: Boolean
+        get() = prefs.getBoolean(GALLERY_WALLPAPER_SET, false)
+        set(value) = prefs.edit { putBoolean(GALLERY_WALLPAPER_SET, value).apply() }
+
     var homeAppsNum: Int
         get() = prefs.getInt(HOME_APPS_NUM, 4)
         set(value) = prefs.edit { putInt(HOME_APPS_NUM, value).apply() }
@@ -193,16 +201,28 @@ class Prefs(context: Context) {
         set(value) = prefs.edit { putBoolean(SWIPE_RIGHT_ENABLED, value).apply() }
 
     var appTheme: Int
-        get() = prefs.getInt(APP_THEME, AppCompatDelegate.MODE_NIGHT_YES)
-        set(value) = prefs.edit { putInt(APP_THEME, value).apply() }
+        get() = AppCompatDelegate.MODE_NIGHT_YES
+        set(value) = prefs.edit { putInt(APP_THEME, AppCompatDelegate.MODE_NIGHT_YES).apply() }
 
     var textSizeScale: Float
         get() = prefs.getFloat(TEXT_SIZE_SCALE, 1.0f)
         set(value) = prefs.edit { putFloat(TEXT_SIZE_SCALE, value).apply() }
 
     var boldFont: Boolean
-        get() = prefs.getBoolean(BOLD_FONT, false)
+        get() = prefs.getBoolean(BOLD_FONT, true)
         set(value) = prefs.edit { putBoolean(BOLD_FONT, value).apply() }
+
+    var textCase: Int
+        get() = prefs.getInt(TEXT_CASE, Constants.TextCase.DEFAULT)
+        set(value) = prefs.edit { putInt(TEXT_CASE, value).apply() }
+
+    var hapticFeedback: Boolean
+        get() = prefs.getBoolean(HAPTIC_FEEDBACK, true)
+        set(value) = prefs.edit { putBoolean(HAPTIC_FEEDBACK, value).apply() }
+
+    var biometricHiddenApps: Boolean
+        get() = prefs.getBoolean(BIOMETRIC_HIDDEN_APPS, true)
+        set(value) = prefs.edit { putBoolean(BIOMETRIC_HIDDEN_APPS, value).apply() }
 
     var proMessageShown: Boolean
         get() = prefs.getBoolean(PRO_MESSAGE_SHOWN, false)
