@@ -1,89 +1,171 @@
-# 黒 Kuro Launcher | Minimal AF Launcher
+<div align="center">
 
-> **AF stands for Ad-Free & Distraction-Free.**  
-> A hyper-minimalist, pure-pitch-black AMOLED Android launcher with zero telemetry, zero bloat, and lightning-fast navigation.
+<img src="assets/logo.png" width="128" height="128" alt="Kuro Launcher Logo" style="border-radius: 28px;" />
+
+# 🌸 黒 Kuro Launcher ✨
+
+### **The Distraction-Free, Pure Pitch-Black AMOLED Android Launcher**
+
+A hyper-minimalist, 1-bit AMOLED Android launcher designed to reclaim your attention and time.  
+Zero ads · Zero tracking · Pure pitch black `#000000` · Instant fuzzy search · Sub-millisecond navigation.
+
+<br>
+
+[![Latest Release](https://img.shields.io/github/v/release/Praveensenpai/KuroLauncher?style=for-the-badge&color=cba6f7&logo=github)](https://github.com/Praveensenpai/KuroLauncher/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Android%207.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Praveensenpai/KuroLauncher)
+[![Language](https://img.shields.io/badge/Kotlin-2.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Universal APK](https://img.shields.io/badge/APK-Universal%20(2.16%20MB)-94e2d5?style=for-the-badge&logo=googleplay&logoColor=black)](https://github.com/Praveensenpai/KuroLauncher/releases/latest)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-a6e3a1?style=for-the-badge)](LICENSE)
+[![Privacy](https://img.shields.io/badge/Telemetry-Zero%20Data%20Collection-f38ba8?style=for-the-badge&logo=adguard&logoColor=white)](https://github.com/Praveensenpai/KuroLauncher)
+
+<br>
+
+[✨ Key Features](#-key-features) • [📱 Screenshots](#-visual-showcase) • [⚡ Quick Install](#-quick-download--install) • [🔄 Architecture](#-system-architecture) • [🛠️ Build from Source](#%EF%B8%8F-building-from-source) • [📜 Credits & License](#-upstream-attribution--credits)
+
+</div>
 
 ---
 
 > [!NOTE]
 > ### 🌸 Upstream Attribution & Credits
-> **Kuro Launcher** is an enhanced, dark-purist fork of the renowned [**Olauncher**](https://github.com/tanujnotes/Olauncher) originally crafted by **[Tanuj (@tanujnotes)](https://github.com/tanujnotes)**.  
-> All core minimalist design principles originated from Tanuj's exceptional vision. Deep gratitude and respect to Tanuj for building one of the cleanest open-source Android projects in existence.  
-> - **Original Repository**: [github.com/tanujnotes/Olauncher](https://github.com/tanujnotes/Olauncher)  
-> - **Original Author**: [Tanuj (@tanujnotes)](https://x.com/tanujnotes) • [Website](https://tanujnotes.substack.com)
+> **Kuro Launcher** (黒) is an enhanced, dark-purist fork of the renowned [**Olauncher**](https://github.com/tanujnotes/Olauncher) originally crafted by **[Tanuj (@tanujnotes)](https://github.com/tanujnotes)**.  
+> All core minimalist design philosophy originated from Tanuj's visionary project. Deep gratitude and respect to Tanuj for building one of the cleanest, most focused open-source Android projects in existence.  
+> • **Original Repository**: [github.com/tanujnotes/Olauncher](https://github.com/tanujnotes/Olauncher)  
+> • **Original Author**: [Tanuj (@tanujnotes)](https://x.com/tanujnotes) • [Website](https://tanujnotes.substack.com)
+
+---
+
+## 📱 Visual Showcase
+
+<div align="center">
+
+| 🌌 **Minimalist Home** | ⚡ **Alphabetical Drawer** | 🔍 **Instant Fuzzy Search** |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/01_home.png" width="240" alt="Kuro Launcher Home Screen" /> | <img src="assets/screenshots/02_drawer.png" width="240" alt="Kuro Launcher App Drawer" /> | <img src="assets/screenshots/03_fuzzy_search.png" width="240" alt="Kuro Launcher Fuzzy Search" /> |
+| *Distraction-free home with live clock, date, and essential apps* | *Fast vertical scroll with quick alphabetical index* | *Fuzzy acronym & substring match with keyboard autofocus* |
+
+<br>
+
+| ⚙️ **Settings & Gestures** | 🎨 **Monochrome Text Tones** |
+| :---: | :---: |
+| <img src="assets/screenshots/04_settings.png" width="240" alt="Kuro Launcher Settings" /> | <img src="assets/screenshots/05_text_tone.png" width="240" alt="Kuro Launcher Text Tone Menu" /> |
+| *Custom swipe actions, text sizing, and AMOLED wallpapers* | *6 true neutral grayscale tone presets (100% down to 50%)* |
+
+</div>
 
 ---
 
 ## ⚡ Why Kuro Launcher?
 
-While preserving the core elegance of Olauncher, Kuro Launcher introduces dark-mode enhancements, security features, and tactile polish for modern OLED displays:
+Most modern launchers bombard you with notification badges, colorful grid icons designed for dopamine spikes, and bloated news feeds. **Kuro Launcher strips all of that away.**
 
+```text
+                      ┌─────────────────────────────────────────┐
+                      │            黒 Kuro Launcher             │
+                      │   Minimalist Distraction-Free Android   │
+                      └────────────────────┬────────────────────┘
+                                           │
+         ┌─────────────────────────────────┼─────────────────────────────────┐
+         ▼                                 ▼                                 ▼
+┌───────────────────┐             ┌───────────────────┐             ┌───────────────────┐
+│   Pure AMOLED     │             │ Lightning Search  │             │ Biometric Privacy │
+│ · True #000000    │             │ · Fuzzy matching  │             │ · Fingerprint/PIN │
+│ · 1-bit Wallpaper │             │ · Acronym queries │             │ · Hidden apps box │
+│ · 0% Battery Drain│             │ · Auto-launch (1x)│             │ · Zero analytics  │
+└───────────────────┘             └───────────────────┘             └───────────────────┘
 ```
-                      ┌─────────────────────────────┐
-                      │      黒 Kuro Launcher       │
-                      └──────────────┬──────────────┘
-                                     │
-         ┌───────────────────────────┼───────────────────────────┐
-         ▼                           ▼                           ▼
-┌───────────────────┐       ┌───────────────────┐       ┌───────────────────┐
-│   Pure AMOLED     │       │    Smart Search   │       │ Biometric Privacy │
-│ 4K 1-bit Black    │       │ Fuzzy + Acronyms  │       │ PIN / Fingerprint │
-│ Custom Wallpaper  │       │ Quick-Clear (✕)   │       │ Hidden App Lock   │
-└───────────────────┘       └───────────────────┘       └───────────────────┘
-```
+
+> [!TIP]
+> **True Pitch-Black Battery Advantage**  
+> On OLED and AMOLED screens, black pixels (`#000000`) physically turn off individual self-lit diodes, consuming virtually **0 mW of display power**. Kuro Launcher's interface and bundled wallpaper are locked to authentic 1-bit black for maximum battery endurance.
 
 ---
 
-## 🌟 Enhanced Features
+## ✨ Key Features
 
-| Feature | Description |
-| :--- | :--- |
-| 🌌 **4K Pitch-Black Default** | Bundled with an authentic 4K 1-bit `#000000` wallpaper out-of-the-box for maximum battery savings on OLED/AMOLED screens. |
-| 🖼️ **Custom Wallpaper Support** | Choose your own custom wallpaper directly from your device gallery without external manager apps. |
-| ⚡ **Fuzzy & Acronym Search** | Type initials or quick abbreviations (e.g. `cgpt` → `ChatGPT`, `yt` → `YouTube`, `ps` → `Play Store`) or loose fuzzy queries. |
-| ✕ **Quick-Clear Search** | Dedicated clear icon `✕` and smart Back-press gesture that clears typed text before exiting the drawer. |
-| 🔒 **Biometric / PIN Protection** | Safeguard hidden apps behind native Android fingerprint, face unlock, or device PIN authentication. |
-| 🔤 **Text Case Customization** | Switch home screen and drawer text styles between **Default**, **lowercase**, or **UPPERCASE**. |
-| 📳 **Tactile Haptic Feedback** | Subtle haptic vibrations for home app launches and swipe gestures (toggleable in Settings). |
-| 🖤 **Always Dark Mode** | Permanently optimized for night and dark themes; zero light-mode flashes or unneeded theme restarts. |
-| 🧹 **Debloated & Privacy-First** | Stripped out background SQLite polling, periodic restart timers, review nags, promo banners, and external links. |
+| Category | Feature | Technical Highlights |
+| :--- | :--- | :--- |
+| 🌌 **AMOLED Dark** | **True `#000000` AMOLED Purism** | Permanently black theme; no light-mode restarts, zero blinding flashes, and true 1-bit AMOLED default wallpaper. |
+| 🎨 **Typography** | **Monochrome Text Tone Presets** | 6 precise neutral grayscale presets (`100% Pure White`, `90% Soft White`, `80% Light Grey`, `70% Medium Grey`, `60% Muted Grey`, `50% Dim Grey`) free from blue/fog tint. |
+| 🔍 **Search** | **Intelligent Fuzzy & Acronym Search** | Instant character matching across labels and acronyms (e.g. `cgpt` → `ChatGPT`, `yt` → `YouTube`, `ps` → `Play Store`) with single-match auto-launch. |
+| ✕ **Ergonomics** | **Quick-Clear Search & Gestures** | Dedicated clear button (`✕`) plus smart back-press hierarchy that clears the typed query before closing the drawer. |
+| 🔒 **Security** | **Biometric App Concealment** | Guard confidential or distracting apps inside a hidden locker locked behind Android BiometricPrompt (fingerprint, face, or PIN). |
+| 📳 **Haptics** | **Tactile Vibration Feedback** | Subtle haptic tick feedback on swipe actions and app launches (fully toggleable in Settings). |
+| 🔤 **Styling** | **Text Case & Size Formatting** | Toggle between **Default**, **lowercase**, or **UPPERCASE** text styles with granular font scaling. |
+| 🖼️ **Wallpapers** | **Direct Gallery Wallpaper Picker** | Apply any custom photo or artwork directly from your gallery without requiring external wallpaper utilities. |
+| 🛡️ **Privacy** | **Zero Telemetry & 100% Offline** | Stripped of background analytics, crash loggers, promotional banners, review dialogs, and external tracking domains. |
 
 ---
 
-## 🚀 Installation & Downloads
+## 🚀 Quick Download & Install
 
-Grab the latest compiled APK from the official [GitHub Releases](https://github.com/Praveensenpai/KuroLauncher/releases):
+### 🪄 Direct GitHub Release (Recommended)
 
+Kuro Launcher is distributed as a single ultra-lightweight **Universal APK (2.16 MB)** that runs natively on all modern ARM (`arm64-v8a`, `armeabi-v7a`) and x86 devices:
+
+👉 **[Download Kuro Launcher v0.2.1 APK](https://github.com/Praveensenpai/KuroLauncher/releases/latest)**
+
+#### Direct Download via GitHub CLI (`gh`):
 ```bash
-# Direct download via GitHub CLI
-gh release download v0.2.0 --repo Praveensenpai/KuroLauncher --pattern "*.apk"
+gh release download --repo Praveensenpai/KuroLauncher --pattern "*.apk"
 ```
 
-Or download directly from your browser:
-👉 **[Download Kuro Launcher v0.2.0 APK](https://github.com/Praveensenpai/KuroLauncher/releases/latest)**
+#### Stream Install via ADB:
+```bash
+adb install -r kuro-launcher-v0.2.1.apk
+```
+
+---
+
+## 🔄 System Architecture
+
+Kuro Launcher is built with high performance and zero overhead in mind, avoiding bloated UI frameworks:
+
+```text
+Android OS (Home Intent / Window Insets)
+  └─> MainActivity (Single Activity Host, Navigation Graph, System UI Controller)
+        ├─> NavController (res/navigation/nav_graph.xml)
+        │     ├─> HomeFragment (Minimal Text Apps, Gestures, Live Clock/Date Header)
+        │     ├─> AppDrawerFragment (Alphabetical App List, Fuzzy Search Bar, Fast Scroll)
+        │     │     └─> AppDrawerAdapter (App Rows, Section Headers, Private Space)
+        │     └─> SettingsFragment (Text Tone, Alignment, Hidden Apps, Gestures)
+        └─> MainViewModel (Shared State, App Discovery, Search Filter, Usage Stats)
+              ├─> LauncherApps / PackageManager (Application Discovery & Launch)
+              ├─> AppFilterHelper (Fast Substring & Subsequence Character Search)
+              ├─> Prefs (SharedPreferences Encapsulation)
+              └─> AppUsageStats / UsageStatsManager (Digital Wellbeing Tracking)
+```
 
 ---
 
 ## 🛠️ Building from Source
 
-Ensure you have **JDK 17** installed:
+### Prerequisites
+- **JDK 17** or **JDK 21** (`export JAVA_HOME=/path/to/jdk`)
+- **Android SDK 36**
 
+### Build Commands:
 ```bash
-# Clone the repository
+# 1. Clone repository
 git clone https://github.com/Praveensenpai/KuroLauncher.git
 cd KuroLauncher
 
-# Assemble debug APK
+# 2. Assemble Debug APK
 ./gradlew assembleDebug
 
-# Assemble release APK
+# 3. Assemble Release APK
 ./gradlew assembleRelease
 ```
 
-The release APK will be generated at `app/build/outputs/apk/release/app-release.apk`.
+The signed release APK will be located at:
+```text
+app/build/outputs/apk/release/app-release.apk
+```
 
 ---
 
-## 📜 License
+## 📜 Upstream Attribution & Credits
 
-Kuro Launcher is licensed under the [GNU General Public License v3.0 (GPL-3.0)](LICENSE) in accordance with the upstream Olauncher project.
+- **Original Project**: [Olauncher](https://github.com/tanujnotes/Olauncher) by **[Tanuj (@tanujnotes)](https://github.com/tanujnotes)**.
+- **License**: Kuro Launcher is licensed under the [GNU General Public License v3.0 (GPL-3.0)](LICENSE) in accordance with the upstream Olauncher project.
+- **Maintainer**: Praveen Senpai ([@Praveensenpai](https://github.com/Praveensenpai))

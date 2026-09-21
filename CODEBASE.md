@@ -200,6 +200,9 @@ JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew lintVitalRelease
 ```
 
 ## 6. Recent Iteration Changes
+- **2026-09-22**:
+  - Replaced legacy documentation with aesthetic centered Hero showcase in `README.md` following `aesthetic-readme-craft`.
+  - Added dedicated `assets/logo.png` and 5 high-resolution phone screenshots (`assets/screenshots/`): Minimalist Home, Alphabetical Drawer, Fuzzy & Acronym Search, Settings, and Text Tone Presets.
 - **2026-09-21**:
   - Added additional 10% margin to KuroLauncher icon assets across all mipmap density buckets (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`).
   - Scaled Kanji glyph down proportionally: foreground `174px` → `157px` (`xxxhdpi`), launcher icon `102px` → `93px` (`xxxhdpi`).
