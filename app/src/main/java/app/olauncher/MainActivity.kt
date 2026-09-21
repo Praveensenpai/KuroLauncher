@@ -78,6 +78,10 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate(savedInstanceState)
         if (prefs.boldFont) theme.applyStyle(R.style.BoldFontOverlay, true)
+        when (prefs.textTone) {
+            Constants.TextTone.PURE_WHITE -> theme.applyStyle(R.style.TextTonePureWhiteOverlay, true)
+            Constants.TextTone.MUTED_GREY -> theme.applyStyle(R.style.TextToneMutedGreyOverlay, true)
+        }
         if (isEinkDisplay() || isSystemAnimationsDisabled()) theme.applyStyle(R.style.NoAnimationOverlay, true)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

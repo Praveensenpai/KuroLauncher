@@ -39,6 +39,7 @@ class Prefs(context: Context) {
     private val TEXT_SIZE_SCALE = "TEXT_SIZE_SCALE"
     private val BOLD_FONT = "BOLD_FONT"
     private val TEXT_CASE = "TEXT_CASE"
+    private val TEXT_TONE = "TEXT_TONE"
     private val HAPTIC_FEEDBACK = "HAPTIC_FEEDBACK"
     private val BIOMETRIC_HIDDEN_APPS = "BIOMETRIC_HIDDEN_APPS"
     private val PRO_MESSAGE_SHOWN = "PRO_MESSAGE_SHOWN"
@@ -215,6 +216,10 @@ class Prefs(context: Context) {
     var textCase: Int
         get() = prefs.getInt(TEXT_CASE, Constants.TextCase.DEFAULT)
         set(value) = prefs.edit { putInt(TEXT_CASE, value).apply() }
+
+    var textTone: Int
+        get() = prefs.getInt(TEXT_TONE, Constants.TextTone.SOFT_WHITE)
+        set(value) = prefs.edit { putInt(TEXT_TONE, value).apply() }
 
     var hapticFeedback: Boolean
         get() = prefs.getBoolean(HAPTIC_FEEDBACK, true)

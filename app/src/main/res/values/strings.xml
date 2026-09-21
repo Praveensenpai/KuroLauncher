@@ -183,4 +183,8 @@
     <string name="text_case_uppercase">UPPERCASE</string>
     <string name="haptic_feedback">Haptic feedback</string>
     <string name="unlock_hidden_apps">Unlock hidden apps</string>
+    <string name="text_tone">Text tone</string>
+    <string name="text_tone_soft">Soft white</string>
+    <string name="text_tone_pure">Pure white</string>
+    <string name="text_tone_muted">Muted grey</string>
 </resources>

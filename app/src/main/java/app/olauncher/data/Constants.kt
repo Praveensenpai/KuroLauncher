@@ -47,6 +47,12 @@ object Constants {
         const val UPPERCASE = 2
     }
 
+    object TextTone {
+        const val SOFT_WHITE = 0
+        const val PURE_WHITE = 1
+        const val MUTED_GREY = 2
+    }
+
     object CharacterIndicator {
         const val SHOW = 102
         const val HIDE = 101

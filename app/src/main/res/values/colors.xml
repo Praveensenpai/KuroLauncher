@@ -30,4 +30,5 @@
 
     <color name="tile_border_faded">#40FFFFFF</color>
     <color name="white_soft">#E0E6ED</color>
+    <color name="text_muted_grey">#9EABB8</color>
 </resources>

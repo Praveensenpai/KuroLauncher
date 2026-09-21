@@ -98,6 +98,7 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         populateTextSize()
         populateBoldFont()
         populateTextCase()
+        populateTextTone()
         populateHapticFeedback()
         populateAlignment()
         populateStatusBar()
@@ -125,6 +126,7 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
             R.id.textSizeValue -> showTextSizeDialog()
             R.id.boldFont -> toggleBoldFont()
             R.id.textCase -> showTextCaseMenu(view)
+            R.id.textTone -> showTextToneMenu(view)
             R.id.hapticFeedback -> toggleHapticFeedback()
 
             R.id.swipeLeftApp -> showAppListIfEnabled(Constants.FLAG_SET_SWIPE_LEFT_APP)
@@ -168,6 +170,7 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
         binding.textSizeValue.setOnClickListener(this)
         binding.boldFont.setOnClickListener(this)
         binding.textCase.setOnClickListener(this)
+        binding.textTone.setOnClickListener(this)
         binding.hapticFeedback.setOnClickListener(this)
 
         binding.galleryWallpaper?.setOnLongClickListener(this)
@@ -553,6 +556,29 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
             Constants.TextCase.LOWERCASE -> getString(R.string.text_case_lowercase)
             Constants.TextCase.UPPERCASE -> getString(R.string.text_case_uppercase)
             else -> getString(R.string.text_case_default)
+        }
+    }
+
+    private fun showTextToneMenu(anchor: View) {
+        anchor.showPopupMenu(
+            configure = { menu ->
+                menu.add(Menu.NONE, Constants.TextTone.SOFT_WHITE, 0, R.string.text_tone_soft)
+                menu.add(Menu.NONE, Constants.TextTone.PURE_WHITE, 1, R.string.text_tone_pure)
+                menu.add(Menu.NONE, Constants.TextTone.MUTED_GREY, 2, R.string.text_tone_muted)
+            }
+        ) { item ->
+            if (prefs.textTone != item.itemId) {
+                prefs.textTone = item.itemId
+                requireActivity().recreate()
+            }
+        }
+    }
+
+    private fun populateTextTone() {
+        binding.textTone.text = when (prefs.textTone) {
+            Constants.TextTone.PURE_WHITE -> getString(R.string.text_tone_pure)
+            Constants.TextTone.MUTED_GREY -> getString(R.string.text_tone_muted)
+            else -> getString(R.string.text_tone_soft)
         }
     }
 

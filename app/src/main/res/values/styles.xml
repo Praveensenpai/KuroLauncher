@@ -58,6 +58,18 @@
         <item name="mainFontFamily">sans-serif</item>
     </style>
 
+    <style name="TextTonePureWhiteOverlay">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="primaryColor">@color/white</item>
+    </style>
+
+    <style name="TextToneMutedGreyOverlay">
+        <item name="colorPrimary">@color/text_muted_grey</item>
+        <item name="colorAccent">@color/text_muted_grey</item>
+        <item name="primaryColor">@color/text_muted_grey</item>
+    </style>
+
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
