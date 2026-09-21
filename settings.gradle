@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name = "kuro-launcher"
+rootProject.name = "KuroLauncher"
