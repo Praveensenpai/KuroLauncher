@@ -41,14 +41,14 @@ Zero ads · Zero tracking · Pure pitch black `#000000` · Instant fuzzy search 
 
 | 🌌 **Minimalist Home** | ⚡ **Alphabetical Drawer** | 🔍 **Instant Fuzzy Search** |
 | :---: | :---: | :---: |
-| <img src="assets/screenshots/01_home.png" width="240" alt="Kuro Launcher Home Screen" /> | <img src="assets/screenshots/02_drawer.png" width="240" alt="Kuro Launcher App Drawer" /> | <img src="assets/screenshots/03_fuzzy_search.png" width="240" alt="Kuro Launcher Fuzzy Search" /> |
-| *Distraction-free home with live clock, date, and essential apps* | *Fast vertical scroll with quick alphabetical index* | *Fuzzy acronym & substring match with keyboard autofocus* |
+| <img src="assets/screenshots/home.png" width="240" alt="Kuro Launcher Home Screen" /> | <img src="assets/screenshots/drawer.png" width="240" alt="Kuro Launcher App Drawer" /> | <img src="assets/screenshots/fuzzy_search.png" width="240" alt="Kuro Launcher Fuzzy Search" /> |
+| *Distraction-free home with live clock, date, and essential apps* | *Clean vertical list with fast-scrolling alphabetical index* | *Instant acronym & character match with auto-keyboard* |
 
 <br>
 
 | ⚙️ **Settings & Gestures** | 🎨 **Monochrome Text Tones** |
 | :---: | :---: |
-| <img src="assets/screenshots/04_settings.png" width="240" alt="Kuro Launcher Settings" /> | <img src="assets/screenshots/05_text_tone.png" width="240" alt="Kuro Launcher Text Tone Menu" /> |
+| <img src="assets/screenshots/settings.png" width="240" alt="Kuro Launcher Settings" /> | <img src="assets/screenshots/text_tone.png" width="240" alt="Kuro Launcher Text Tone Menu" /> |
 | *Custom swipe actions, text sizing, and AMOLED wallpapers* | *6 true neutral grayscale tone presets (100% down to 50%)* |
 
 </div>
