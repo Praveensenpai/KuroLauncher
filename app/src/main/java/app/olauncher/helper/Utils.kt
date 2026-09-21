@@ -756,3 +756,12 @@ fun View?.triggerHapticFeedback(context: Context) {
         e.printStackTrace()
     }
 }
+
+fun Context.getTextToneColor(): Int {
+    val prefs = Prefs(this)
+    return when (prefs.textTone) {
+        Constants.TextTone.PURE_WHITE -> androidx.core.content.ContextCompat.getColor(this, R.color.white)
+        Constants.TextTone.MUTED_GREY -> androidx.core.content.ContextCompat.getColor(this, R.color.text_muted_grey)
+        else -> androidx.core.content.ContextCompat.getColor(this, R.color.white_soft)
+    }
+}

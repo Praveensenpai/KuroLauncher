@@ -21,6 +21,7 @@ import app.olauncher.data.Constants
 import app.olauncher.databinding.AdapterAppDrawerBinding
 import app.olauncher.databinding.AdapterPrivateSpaceHeaderBinding
 import app.olauncher.helper.formatTextCase
+import app.olauncher.helper.getTextToneColor
 import app.olauncher.helper.hideKeyboard
 import app.olauncher.helper.isSystemApp
 import app.olauncher.helper.showKeyboard
@@ -336,6 +337,7 @@ class AppDrawerAdapter(
                 if (appModel.isNew) append(" ✦")
             }
             appTitle.gravity = appLabelGravity
+            appTitle.setTextColor(root.context.getTextToneColor())
             otherProfileIndicator.isVisible = appModel.user != myUserHandle
 
             appTitle.setOnClickListener {

@@ -34,6 +34,7 @@ import app.olauncher.helper.appUsagePermissionGranted
 import app.olauncher.helper.dpToPx
 import app.olauncher.helper.expandNotificationDrawer
 import app.olauncher.helper.formatTextCase
+import app.olauncher.helper.getTextToneColor
 import app.olauncher.helper.getChangedAppTheme
 import app.olauncher.helper.getUserHandleFromString
 import app.olauncher.helper.isPackageInstalled
@@ -321,8 +322,24 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         binding.tvScreenTime.setPadding(10.dpToPx())
     }
 
+    private fun applyTextToneColor() {
+        val color = requireContext().getTextToneColor()
+        binding.homeApp1.setTextColor(color)
+        binding.homeApp2.setTextColor(color)
+        binding.homeApp3.setTextColor(color)
+        binding.homeApp4.setTextColor(color)
+        binding.homeApp5.setTextColor(color)
+        binding.homeApp6.setTextColor(color)
+        binding.homeApp7.setTextColor(color)
+        binding.homeApp8.setTextColor(color)
+        binding.clock.setTextColor(color)
+        binding.date.setTextColor(color)
+        binding.tvScreenTime.setTextColor(color)
+    }
+
     private fun populateHomeScreen(appCountUpdated: Boolean) {
         if (appCountUpdated) hideHomeApps()
+        applyTextToneColor()
         populateDateTime()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
