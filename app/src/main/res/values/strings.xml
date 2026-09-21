@@ -184,7 +184,10 @@
     <string name="haptic_feedback">Haptic feedback</string>
     <string name="unlock_hidden_apps">Unlock hidden apps</string>
     <string name="text_tone">Text tone</string>
-    <string name="text_tone_soft">Soft white</string>
-    <string name="text_tone_pure">Pure white</string>
-    <string name="text_tone_muted">Muted grey</string>
+    <string name="text_tone_100">100% (Pure white)</string>
+    <string name="text_tone_90">90% (Soft white)</string>
+    <string name="text_tone_80">80% (Light grey)</string>
+    <string name="text_tone_70">70% (Medium grey)</string>
+    <string name="text_tone_60">60% (Muted grey)</string>
+    <string name="text_tone_50">50% (Dim grey)</string>
 </resources>

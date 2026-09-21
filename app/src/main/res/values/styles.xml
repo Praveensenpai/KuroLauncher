@@ -58,16 +58,38 @@
         <item name="mainFontFamily">sans-serif</item>
     </style>
 
-    <style name="TextTonePureWhiteOverlay">
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorAccent">@color/white</item>
-        <item name="primaryColor">@color/white</item>
-    </style>
+    <style name="TextTonePureWhiteOverlay" parent="TextToneOverlay_100" />
+    <style name="TextToneMutedGreyOverlay" parent="TextToneOverlay_60" />
 
-    <style name="TextToneMutedGreyOverlay">
-        <item name="colorPrimary">@color/text_muted_grey</item>
-        <item name="colorAccent">@color/text_muted_grey</item>
-        <item name="primaryColor">@color/text_muted_grey</item>
+    <style name="TextToneOverlay_100">
+        <item name="colorPrimary">@color/text_tone_100</item>
+        <item name="colorAccent">@color/text_tone_100</item>
+        <item name="primaryColor">@color/text_tone_100</item>
+    </style>
+    <style name="TextToneOverlay_90">
+        <item name="colorPrimary">@color/text_tone_90</item>
+        <item name="colorAccent">@color/text_tone_90</item>
+        <item name="primaryColor">@color/text_tone_90</item>
+    </style>
+    <style name="TextToneOverlay_80">
+        <item name="colorPrimary">@color/text_tone_80</item>
+        <item name="colorAccent">@color/text_tone_80</item>
+        <item name="primaryColor">@color/text_tone_80</item>
+    </style>
+    <style name="TextToneOverlay_70">
+        <item name="colorPrimary">@color/text_tone_70</item>
+        <item name="colorAccent">@color/text_tone_70</item>
+        <item name="primaryColor">@color/text_tone_70</item>
+    </style>
+    <style name="TextToneOverlay_60">
+        <item name="colorPrimary">@color/text_tone_60</item>
+        <item name="colorAccent">@color/text_tone_60</item>
+        <item name="primaryColor">@color/text_tone_60</item>
+    </style>
+    <style name="TextToneOverlay_50">
+        <item name="colorPrimary">@color/text_tone_50</item>
+        <item name="colorAccent">@color/text_tone_50</item>
+        <item name="primaryColor">@color/text_tone_50</item>
     </style>
 
     <style name="WindowAnimationTransition">

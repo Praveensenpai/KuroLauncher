@@ -32,6 +32,7 @@ import app.olauncher.databinding.FragmentSettingsBinding
 import app.olauncher.helper.appUsagePermissionGranted
 import app.olauncher.helper.createDialog
 import app.olauncher.helper.getColorFromAttr
+import app.olauncher.helper.getTextToneColor
 import app.olauncher.helper.hideStatusBar
 import app.olauncher.helper.isAccessServiceEnabled
 import app.olauncher.helper.isDarkThemeOn
@@ -562,9 +563,12 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
     private fun showTextToneMenu(anchor: View) {
         anchor.showPopupMenu(
             configure = { menu ->
-                menu.add(Menu.NONE, Constants.TextTone.SOFT_WHITE, 0, R.string.text_tone_soft)
-                menu.add(Menu.NONE, Constants.TextTone.PURE_WHITE, 1, R.string.text_tone_pure)
-                menu.add(Menu.NONE, Constants.TextTone.MUTED_GREY, 2, R.string.text_tone_muted)
+                menu.add(Menu.NONE, Constants.TextTone.TONE_100, 0, R.string.text_tone_100)
+                menu.add(Menu.NONE, Constants.TextTone.TONE_90, 1, R.string.text_tone_90)
+                menu.add(Menu.NONE, Constants.TextTone.TONE_80, 2, R.string.text_tone_80)
+                menu.add(Menu.NONE, Constants.TextTone.TONE_70, 3, R.string.text_tone_70)
+                menu.add(Menu.NONE, Constants.TextTone.TONE_60, 4, R.string.text_tone_60)
+                menu.add(Menu.NONE, Constants.TextTone.TONE_50, 5, R.string.text_tone_50)
             }
         ) { item ->
             if (prefs.textTone != item.itemId) {
@@ -576,9 +580,12 @@ class SettingsFragment : BaseFragment(), View.OnClickListener, View.OnLongClickL
 
     private fun populateTextTone() {
         binding.textTone.text = when (prefs.textTone) {
-            Constants.TextTone.PURE_WHITE -> getString(R.string.text_tone_pure)
-            Constants.TextTone.MUTED_GREY -> getString(R.string.text_tone_muted)
-            else -> getString(R.string.text_tone_soft)
+            Constants.TextTone.TONE_100 -> getString(R.string.text_tone_100)
+            Constants.TextTone.TONE_80 -> getString(R.string.text_tone_80)
+            Constants.TextTone.TONE_70 -> getString(R.string.text_tone_70)
+            Constants.TextTone.TONE_60 -> getString(R.string.text_tone_60)
+            Constants.TextTone.TONE_50 -> getString(R.string.text_tone_50)
+            else -> getString(R.string.text_tone_90)
         }
     }
 

@@ -218,7 +218,16 @@ class Prefs(context: Context) {
         set(value) = prefs.edit { putInt(TEXT_CASE, value).apply() }
 
     var textTone: Int
-        get() = prefs.getInt(TEXT_TONE, Constants.TextTone.SOFT_WHITE)
+        get() {
+            val value = prefs.getInt(TEXT_TONE, Constants.TextTone.DEFAULT)
+            return when (value) {
+                0, 85 -> Constants.TextTone.TONE_90
+                1, 100 -> Constants.TextTone.TONE_100
+                2, 65, 60 -> Constants.TextTone.TONE_60
+                50, 70, 80, 90 -> value
+                else -> Constants.TextTone.DEFAULT
+            }
+        }
         set(value) = prefs.edit { putInt(TEXT_TONE, value).apply() }
 
     var hapticFeedback: Boolean

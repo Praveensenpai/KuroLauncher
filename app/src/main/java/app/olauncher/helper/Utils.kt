@@ -759,9 +759,21 @@ fun View?.triggerHapticFeedback(context: Context) {
 
 fun Context.getTextToneColor(): Int {
     val prefs = Prefs(this)
-    return when (prefs.textTone) {
-        Constants.TextTone.PURE_WHITE -> androidx.core.content.ContextCompat.getColor(this, R.color.white)
-        Constants.TextTone.MUTED_GREY -> androidx.core.content.ContextCompat.getColor(this, R.color.text_muted_grey)
-        else -> androidx.core.content.ContextCompat.getColor(this, R.color.white_soft)
+    return getTextToneColor(prefs.textTone)
+}
+
+fun getTextToneColor(percent: Int): Int {
+    return when (percent) {
+        Constants.TextTone.TONE_100 -> android.graphics.Color.rgb(255, 255, 255)
+        Constants.TextTone.TONE_90 -> android.graphics.Color.rgb(230, 230, 230)
+        Constants.TextTone.TONE_80 -> android.graphics.Color.rgb(204, 204, 204)
+        Constants.TextTone.TONE_70 -> android.graphics.Color.rgb(179, 179, 179)
+        Constants.TextTone.TONE_60 -> android.graphics.Color.rgb(153, 153, 153)
+        Constants.TextTone.TONE_50 -> android.graphics.Color.rgb(128, 128, 128)
+        else -> {
+            val v = (255 * percent.coerceIn(50, 100) / 100)
+            android.graphics.Color.rgb(v, v, v)
+        }
     }
 }
+

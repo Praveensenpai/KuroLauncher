@@ -29,6 +29,14 @@
     <color name="blackInverseTrans90">#E6FFFFFF</color>
 
     <color name="tile_border_faded">#40FFFFFF</color>
-    <color name="white_soft">#E0E6ED</color>
-    <color name="text_muted_grey">#9EABB8</color>
+    <color name="white_soft">#E6E6E6</color>
+    <color name="text_muted_grey">#999999</color>
+
+    <!-- True Monochrome Grayscale Text Tones (Zero Blue Tint) -->
+    <color name="text_tone_100">#FFFFFF</color>
+    <color name="text_tone_90">#E6E6E6</color>
+    <color name="text_tone_80">#CCCCCC</color>
+    <color name="text_tone_70">#B3B3B3</color>
+    <color name="text_tone_60">#999999</color>
+    <color name="text_tone_50">#808080</color>
 </resources>

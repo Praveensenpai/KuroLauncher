@@ -48,9 +48,13 @@ object Constants {
     }
 
     object TextTone {
-        const val SOFT_WHITE = 0
-        const val PURE_WHITE = 1
-        const val MUTED_GREY = 2
+        const val TONE_100 = 100
+        const val TONE_90 = 90
+        const val TONE_80 = 80
+        const val TONE_70 = 70
+        const val TONE_60 = 60
+        const val TONE_50 = 50
+        const val DEFAULT = TONE_90
     }
 
     object CharacterIndicator {
