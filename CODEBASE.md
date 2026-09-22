@@ -28,9 +28,9 @@ Android OS (Home Intent / Window Insets)
 
 ## 3. Module & Interface Skeleton
 
-### `app/src/main/java/app/olauncher/MainActivity.kt` (Role: api, Lines: ~306)
+### `app/src/main/java/com/paisen/kurolauncher/MainActivity.kt` (Role: api, Lines: ~306)
 - **Responsibility**: Top-level single Activity host, navigation back stack manager, window inset handler, and package broadcast receiver.
-- **Imports**: `androidx.appcompat.app.AppCompatActivity`, `androidx.navigation.NavController`, `app.olauncher.MainViewModel`, `app.olauncher.data.Prefs`
+- **Imports**: `androidx.appcompat.app.AppCompatActivity`, `androidx.navigation.NavController`, `com.paisen.kurolauncher.MainViewModel`, `com.paisen.kurolauncher.data.Prefs`
 - **Types & Enums**:
   ```kotlin
   class MainActivity : AppCompatActivity()
@@ -45,9 +45,9 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: Android OS Launcher Intent (`android.intent.action.MAIN` + `CATEGORY_HOME`).
 - **Side Effects / I/O**: Modifies Window flags (`FLAG_LAYOUT_NO_LIMITS`), registers `packageChangeReceiver` broadcast receiver, reads/writes `Prefs`.
 
-### `app/src/main/java/app/olauncher/MainViewModel.kt` (Role: domain, Lines: ~513)
+### `app/src/main/java/com/paisen/kurolauncher/MainViewModel.kt` (Role: domain, Lines: ~513)
 - **Responsibility**: State holder for installed applications, filtered search results, hidden apps, home apps, and digital wellbeing screen time.
-- **Imports**: `androidx.lifecycle.ViewModel`, `androidx.lifecycle.LiveData`, `androidx.lifecycle.MutableLiveData`, `app.olauncher.data.AppModel`
+- **Imports**: `androidx.lifecycle.ViewModel`, `androidx.lifecycle.LiveData`, `androidx.lifecycle.MutableLiveData`, `com.paisen.kurolauncher.data.AppModel`
 - **Types & Enums**:
   ```kotlin
   class MainViewModel(application: Application) : AndroidViewModel(application)
@@ -64,7 +64,7 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `HomeFragment`, `AppDrawerFragment`, `SettingsFragment`, `MainActivity`.
 - **Side Effects / I/O**: Queries `LauncherApps`, queries `UsageStatsManager`, modifies `Prefs`.
 
-### `app/src/main/java/app/olauncher/data/AppModel.kt` (Role: domain, Lines: ~48)
+### `app/src/main/java/com/paisen/kurolauncher/data/AppModel.kt` (Role: domain, Lines: ~48)
 - **Responsibility**: Core domain models for installed applications, search filtering states, and app drawer items.
 - **Types & Enums**:
   ```kotlin
@@ -74,7 +74,7 @@ Android OS (Home Intent / Window Insets)
   ```
 - **Consumers**: `MainViewModel`, `AppDrawerAdapter`, `HomeFragment`, `AppFilterHelper`.
 
-### `app/src/main/java/app/olauncher/data/Prefs.kt` (Role: infra, Lines: ~680)
+### `app/src/main/java/com/paisen/kurolauncher/data/Prefs.kt` (Role: infra, Lines: ~680)
 - **Responsibility**: Typed SharedPreferences abstraction managing user settings (theme, text tone, gestures, hidden apps, home app slots).
 - **Types & Enums**:
   ```kotlin
@@ -90,7 +90,7 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: Entire application (`MainViewModel`, `HomeFragment`, `SettingsFragment`, `AppDrawerAdapter`).
 - **Side Effects / I/O**: Reads and writes XML preference store in Android private app storage.
 
-### `app/src/main/java/app/olauncher/data/Constants.kt` (Role: domain, Lines: ~129)
+### `app/src/main/java/com/paisen/kurolauncher/data/Constants.kt` (Role: domain, Lines: ~129)
 - **Responsibility**: Static constant definitions for gesture actions, preference keys, bundle arguments, and intent actions.
 - **Types & Enums**:
   ```kotlin
@@ -103,9 +103,9 @@ Android OS (Home Intent / Window Insets)
   ```
 - **Consumers**: `HomeFragment`, `SettingsFragment`, `OnSwipeTouchListener`.
 
-### `app/src/main/java/app/olauncher/ui/HomeFragment.kt` (Role: api, Lines: ~755)
+### `app/src/main/java/com/paisen/kurolauncher/ui/HomeFragment.kt` (Role: api, Lines: ~755)
 - **Responsibility**: Displays clean home screen: user-configured text shortcuts, live clock, date, calendar touch targets, and swipe gestures.
-- **Imports**: `app.olauncher.ui.BaseFragment`, `app.olauncher.databinding.FragmentHomeBinding`, `app.olauncher.listener.OnSwipeTouchListener`
+- **Imports**: `com.paisen.kurolauncher.ui.BaseFragment`, `com.paisen.kurolauncher.databinding.FragmentHomeBinding`, `com.paisen.kurolauncher.listener.OnSwipeTouchListener`
 - **Types & Enums**:
   ```kotlin
   class HomeFragment : BaseFragment<FragmentHomeBinding>()
@@ -119,9 +119,9 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `NavController` (home destination).
 - **Side Effects / I/O**: Launches application intents, invokes system alarm/calendar intents, manages screen lock via DevicePolicyManager.
 
-### `app/src/main/java/app/olauncher/ui/AppDrawerFragment.kt` (Role: api, Lines: ~400)
+### `app/src/main/java/com/paisen/kurolauncher/ui/AppDrawerFragment.kt` (Role: api, Lines: ~400)
 - **Responsibility**: Full-screen vertical scrolling app drawer featuring fuzzy search input, automatic keyboard focus, and fast scroll index.
-- **Imports**: `app.olauncher.ui.BaseFragment`, `app.olauncher.databinding.FragmentAppDrawerBinding`, `app.olauncher.ui.AppDrawerAdapter`
+- **Imports**: `com.paisen.kurolauncher.ui.BaseFragment`, `com.paisen.kurolauncher.databinding.FragmentAppDrawerBinding`, `com.paisen.kurolauncher.ui.AppDrawerAdapter`
 - **Types & Enums**:
   ```kotlin
   class AppDrawerFragment : BaseFragment<FragmentAppDrawerBinding>()
@@ -135,9 +135,9 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `NavController` (drawer destination).
 - **Side Effects / I/O**: Controls Android InputMethodManager (keyboard), launches apps on single search match.
 
-### `app/src/main/java/app/olauncher/ui/AppDrawerAdapter.kt` (Role: api, Lines: ~459)
+### `app/src/main/java/com/paisen/kurolauncher/ui/AppDrawerAdapter.kt` (Role: api, Lines: ~459)
 - **Responsibility**: RecyclerView adapter for app drawer items, alphabetical section headers, and Android Private Space collapsible container.
-- **Imports**: `androidx.recyclerview.widget.ListAdapter`, `androidx.recyclerview.widget.DiffUtil`, `app.olauncher.data.AppModel`
+- **Imports**: `androidx.recyclerview.widget.ListAdapter`, `androidx.recyclerview.widget.DiffUtil`, `com.paisen.kurolauncher.data.AppModel`
 - **Types & Enums**:
   ```kotlin
   class AppDrawerAdapter(private val clickListener: (AppModel) -> Unit) : ListAdapter<AppModel, RecyclerView.ViewHolder>(DIFF_CALLBACK)
@@ -145,9 +145,9 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `AppDrawerFragment`.
 - **Side Effects / I/O**: Displays context popup menu for app info, uninstall, rename, and hide actions.
 
-### `app/src/main/java/app/olauncher/ui/SettingsFragment.kt` (Role: api, Lines: ~715)
+### `app/src/main/java/com/paisen/kurolauncher/ui/SettingsFragment.kt` (Role: api, Lines: ~715)
 - **Responsibility**: Comprehensive settings screen: text tone presets (Soft White, Pure White, Muted Grey), alignment, gestures, hidden apps, wallpaper.
-- **Imports**: `app.olauncher.ui.BaseFragment`, `app.olauncher.databinding.FragmentSettingsBinding`, `app.olauncher.data.Prefs`
+- **Imports**: `com.paisen.kurolauncher.ui.BaseFragment`, `com.paisen.kurolauncher.databinding.FragmentSettingsBinding`, `com.paisen.kurolauncher.data.Prefs`
 - **Types & Enums**:
   ```kotlin
   class SettingsFragment : BaseFragment<FragmentSettingsBinding>()
@@ -155,7 +155,7 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `NavController` (settings destination).
 - **Side Effects / I/O**: Writes `Prefs`, sets pitch-black AMOLED wallpaper via `WallpaperManager`.
 
-### `app/src/main/java/app/olauncher/helper/Utils.kt` (Role: infra, Lines: ~779)
+### `app/src/main/java/com/paisen/kurolauncher/helper/Utils.kt` (Role: infra, Lines: ~779)
 - **Responsibility**: Global utility functions for Android system interactions (launching apps, opening system settings, status bar toggles).
 - **Public Functions & Signatures**:
   ```kotlin
@@ -169,7 +169,7 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `HomeFragment`, `AppDrawerFragment`, `SettingsFragment`, `MainActivity`.
 - **Side Effects / I/O**: Launches system intents, accesses `DevicePolicyManager` and `AccessibilityManager`.
 
-### `app/src/main/java/app/olauncher/listener/OnSwipeTouchListener.kt` (Role: infra, Lines: ~112)
+### `app/src/main/java/com/paisen/kurolauncher/listener/OnSwipeTouchListener.kt` (Role: infra, Lines: ~112)
 - **Responsibility**: Detects directional fling/swipe gestures (up, down, left, right) and double taps on home screen root view.
 - **Types & Enums**:
   ```kotlin
@@ -201,6 +201,9 @@ JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew lintVitalRelease
 
 ## 6. Recent Iteration Changes
 - **2026-09-22**:
+  - Migrated complete application identity and namespace from `app.olauncher` to `com.paisen.kurolauncher` (v0.3.0).
+  - Relocated all Java/Kotlin source trees from `app/olauncher/` to `com/paisen/kurolauncher/`.
+  - Updated all package declarations, imports, navigation manifests, and accessibility configurations.
   - Replaced legacy documentation with aesthetic centered Hero showcase in `README.md` following `aesthetic-readme-craft`.
   - Added dedicated `assets/logo.png` and 5 high-resolution phone screenshots (`assets/screenshots/`): Minimalist Home, Alphabetical Drawer, Fuzzy & Acronym Search, Settings, and Text Tone Presets.
 - **2026-09-21**:
