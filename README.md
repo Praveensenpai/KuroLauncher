@@ -103,7 +103,7 @@ Most modern launchers bombard you with notification badges, colorful grid icons 
 
 Kuro Launcher is distributed as a single ultra-lightweight **Universal APK (2.16 MB)** that runs natively on all modern ARM (`arm64-v8a`, `armeabi-v7a`) and x86 devices:
 
-👉 **[Download Kuro Launcher v0.2.1 APK](https://github.com/Praveensenpai/KuroLauncher/releases/latest)**
+👉 **[Download Kuro Launcher v0.3.0 APK](https://github.com/Praveensenpai/KuroLauncher/releases/latest)**
 
 #### Direct Download via GitHub CLI (`gh`):
 ```bash
@@ -112,7 +112,7 @@ gh release download --repo Praveensenpai/KuroLauncher --pattern "*.apk"
 
 #### Stream Install via ADB:
 ```bash
-adb install -r kuro-launcher-v0.2.1.apk
+adb install -r kuro-launcher-v0.3.0.apk
 ```
 
 ---
