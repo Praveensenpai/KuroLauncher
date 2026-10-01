@@ -98,7 +98,8 @@ suspend fun getAppsList(
                         appPackage = app.applicationInfo.packageName,
                         activityClassName = app.componentName.className,
                         isNew = (System.currentTimeMillis() - app.firstInstallTime) < Constants.ONE_HOUR_IN_MILLIS,
-                        user = profile
+                        user = profile,
+                        searchTerms = JapaneseSearchHelper.generateSearchTerms(appLabelShown, app.applicationInfo.packageName)
                     )
 
                     // if the current app is not OLauncher
@@ -171,7 +172,8 @@ private suspend fun getPinnedShortcuts(
                                     appPackage = shortcut.`package`,
                                     shortcutId = shortcut.id,
                                     isNew = false,
-                                    user = profile
+                                    user = profile,
+                                    searchTerms = JapaneseSearchHelper.generateSearchTerms(label, shortcut.`package`)
                                 )
                             )
                         }
@@ -254,7 +256,8 @@ suspend fun getPrivateSpaceApps(
                         appPackage = app.applicationInfo.packageName,
                         activityClassName = app.componentName.className,
                         isNew = false,
-                        user = privateSpaceHandle
+                        user = privateSpaceHandle,
+                        searchTerms = JapaneseSearchHelper.generateSearchTerms(appLabelShown, app.applicationInfo.packageName)
                     )
                 )
             }

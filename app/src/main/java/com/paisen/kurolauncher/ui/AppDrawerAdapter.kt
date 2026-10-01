@@ -20,6 +20,7 @@ import com.paisen.kurolauncher.data.AppModel
 import com.paisen.kurolauncher.data.Constants
 import com.paisen.kurolauncher.databinding.AdapterAppDrawerBinding
 import com.paisen.kurolauncher.databinding.AdapterPrivateSpaceHeaderBinding
+import com.paisen.kurolauncher.helper.JapaneseSearchHelper
 import com.paisen.kurolauncher.helper.formatTextCase
 import com.paisen.kurolauncher.helper.getTextToneColor
 import com.paisen.kurolauncher.helper.hideKeyboard
@@ -147,7 +148,7 @@ class AppDrawerAdapter(
                     appsList
                         .filter { it !is AppModel.PrivateSpaceHeader && it.appLabel.isNotBlank() }
                         .mapNotNull { app ->
-                            val score = getMatchScore(app.appLabel, query)
+                            val score = getMatchScore(app, query)
                             if (score != null) Pair(app, score) else null
                         }
                         .sortedWith(compareBy({ it.second }, { it.first.appLabel.lowercase() }))
@@ -187,7 +188,22 @@ class AppDrawerAdapter(
         }
     }
 
-    private fun getMatchScore(appLabel: String, rawQuery: String): Int? {
+    private fun getMatchScore(app: AppModel, rawQuery: String): Int? {
+        val query = rawQuery.trim()
+        if (query.isEmpty()) return 0
+
+        val directScore = getDirectMatchScore(app.appLabel, query)
+        if (directScore != null) return directScore
+
+        val searchTerms = if (app.searchTerms.isNotEmpty()) {
+            app.searchTerms
+        } else {
+            JapaneseSearchHelper.generateSearchTerms(app.appLabel, app.appPackage)
+        }
+        return JapaneseSearchHelper.getJapaneseMatchScore(app.appLabel, searchTerms, query)
+    }
+
+    private fun getDirectMatchScore(appLabel: String, rawQuery: String): Int? {
         val query = rawQuery.trim()
         if (query.isEmpty()) return 0
 

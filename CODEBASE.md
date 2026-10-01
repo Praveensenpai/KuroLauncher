@@ -169,6 +169,32 @@ Android OS (Home Intent / Window Insets)
 - **Consumers**: `HomeFragment`, `AppDrawerFragment`, `SettingsFragment`, `MainActivity`.
 - **Side Effects / I/O**: Launches system intents, accesses `DevicePolicyManager` and `AccessibilityManager`.
 
+### `app/src/main/java/com/paisen/kurolauncher/helper/JapaneseSearchHelper.kt` (Role: infra, Lines: ~290)
+- **Responsibility**: Bidirectional phonetic transliterator (Romaji <-> Kana), Kanji reading lookup, English app alias matcher, and package keyword extractor.
+- **Types & Enums**:
+  ```kotlin
+  object JapaneseSearchHelper
+  ```
+- **Public Functions & Signatures**:
+  ```kotlin
+  fun isKana(c: Char): Boolean
+  fun isKanji(c: Char): Boolean
+  fun containsJapanese(text: String): Boolean
+  fun kanaToRomaji(input: String): List<String>
+  fun romajiToKana(query: String): Pair<String, String>
+  fun generateSearchTerms(label: String, packageName: String): List<String>
+  fun getJapaneseMatchScore(appLabel: String, searchTerms: List<String>, query: String): Int?
+  ```
+- **Consumers**: `AppDrawerAdapter`, `Utils`.
+
+### `app/src/main/java/com/paisen/kurolauncher/helper/JapaneseKanaData.kt` (Role: infra, Lines: ~193)
+- **Responsibility**: Static phonetic mapping tables, loan compound dictionaries, common Kanji app readings, and English-Japanese application aliases.
+- **Types & Enums**:
+  ```kotlin
+  object JapaneseKanaData
+  ```
+- **Consumers**: `JapaneseSearchHelper`.
+
 ### `app/src/main/java/com/paisen/kurolauncher/listener/OnSwipeTouchListener.kt` (Role: infra, Lines: ~112)
 - **Responsibility**: Detects directional fling/swipe gestures (up, down, left, right) and double taps on home screen root view.
 - **Types & Enums**:
@@ -200,6 +226,11 @@ JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew lintVitalRelease
 ```
 
 ## 6. Recent Iteration Changes
+- **2026-10-01 (v0.4.0)**:
+  - Added bidirectional Japanese phonetic search support: Kana to Romaji, Romaji to Kana, and common Kanji app readings.
+  - Implemented bilingual English ↔ Japanese application alias matching and package keyword extraction.
+  - Precomputed app `searchTerms` in `AppModel` hierarchy and optimized `AppDrawerAdapter` ranking.
+  - Added full test coverage in `JapaneseSearchHelperTest`.
 - **2026-09-22**:
   - Migrated complete application identity and namespace from `app.olauncher` to `com.paisen.kurolauncher` (v0.3.0).
   - Relocated all Java/Kotlin source trees from `app/olauncher/` to `com/paisen/kurolauncher/`.
