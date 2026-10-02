@@ -43,3 +43,4 @@ cargo test 2>&1 | tayori pipe --title "Cargo Test"
 - **Exit Code Verification**:
   - Exit code `0`: User tapped `[Approve]`. Safe to proceed.
   - Non-zero exit code: User tapped `[Reject]` or the request timed out. Do not execute proposed modifications.
+
